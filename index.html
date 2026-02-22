@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ManhwaDir - Tu Biblioteca de Manga</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <img src="app-logo.png" class="logo-image" alt="ManhwaDir Logo">
+                <span class="logo-text">ManhwaDir</span>
+            </div>
+
+            <ul class="nav-links">
+                <li class="nav-item active" data-section="directorio">
+                    <i data-lucide="layout-grid"></i>
+                    <span>Colección</span>
+                </li>
+
+                <li class="nav-item" data-section="favoritos">
+                    <i data-lucide="heart"></i>
+                    <span>Favoritos</span>
+                </li>
+                <li class="nav-item" data-section="agregar">
+                    <i data-lucide="plus-circle"></i>
+                    <span>Agregar</span>
+                </li>
+                <li class="nav-item" data-section="generos">
+                    <i data-lucide="tags"></i>
+                    <span>Géneros</span>
+                </li>
+                <li class="nav-item" data-section="categorias">
+                    <i data-lucide="folder"></i>
+                    <span>Categorías</span>
+                </li>
+
+
+            </ul>
+
+            <div class="sidebar-footer">
+                <li class="nav-item" id="btn-backup" style="list-style: none;">
+                    <i data-lucide="database-backup"></i>
+                    <span>Respaldo BDD</span>
+                </li>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <header class="content-header">
+                <h1 id="section-title">Colección de Mangas</h1>
+                <div style="flex-grow: 1;"></div> <!-- Empuja búsqueda y tema a la derecha -->
+                <div class="search-container">
+                    <i data-lucide="search"></i>
+                    <input type="text" id="search-input" placeholder="Explorar biblioteca...">
+                </div>
+
+                <div class="theme-switch" title="Cambiar Tema">
+                    <i data-lucide="moon"></i>
+                </div>
+            </header>
+
+            <!-- New Filters Bar -->
+            <div class="filters-bar" id="filters-container">
+                <div class="filter-group">
+                    <i data-lucide="filter" style="width: 16px; color: var(--accent-color);"></i>
+                    <select id="filter-category">
+                        <option value="all">Todas las Categorías</option>
+                        <!-- Categorías dinámicas -->
+                    </select>
+                </div>
+                <div class="filter-group">
+
+                    <i data-lucide="filter" style="width: 16px; color: var(--accent-color);"></i>
+                    <select id="filter-status">
+                        <option value="all">Todos los Estados</option>
+                        <option value="Emisión">Emisión</option>
+                        <option value="Finalizado">Finalizado</option>
+                        <option value="Pausado">Pausado</option>
+                        <option value="Cancelado">Cancelado</option>
+
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <i data-lucide="filter" style="width: 16px; color: var(--accent-color);"></i>
+                    <select id="filter-genre">
+                        <option value="all">Todos los Géneros</option>
+                        <!-- Géneros dinámicos -->
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <i data-lucide="filter" style="width: 16px; color: var(--accent-color);"></i>
+                    <select id="filter-updates">
+                        <option value="all">Cualquier Fecha</option>
+                        <option value="actualizados">Recién Actualizados</option>
+                    </select>
+                </div>
+                <div style="flex-grow: 1;"></div>
+                <div class="filter-group">
+                    <i data-lucide="filter" style="width: 16px; color: var(--accent-color);"></i>
+                    <select id="sort-order">
+                        <option value="recent">Más Recientes</option>
+                        <option value="oldest">Más Antiguos</option>
+                        <option value="az">A-Z</option>
+                        <option value="za">Z-A</option>
+                    </select>
+                </div>
+            </div>
+
+
+            <section id="content-view" class="view-container">
+                <!-- El contenido se cargará dinámicamente aquí -->
+                <div class="loading-state">
+                    <div class="spinner"></div>
+                    <p>Cargando tu colección...</p>
+                </div>
+            </section>
+            </main>
+        </div>
+
+        <!-- Modals / Toast Notifications Container -->
+        <div id="notification-container"></div>
+
+        <script src="renderer.js"></script>
+</body>
+
+</html>

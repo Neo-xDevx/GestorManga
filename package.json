@@ -1,0 +1,35 @@
+{
+  "name": "manhwadir",
+  "version": "1.0.0",
+  "description": "Gestor de biblioteca de mangas premium con estética Windows 11.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --windows"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "electron": "^40.6.0",
+    "electron-builder": "^24.13.3",
+    "electron-rebuild": "^3.2.9"
+  },
+  "build": {
+    "appId": "com.house.manhwadir",
+    "productName": "ManhwaDir",
+    "win": {
+      "icon": "manga.ico",
+      "target": [
+        "nsis"
+      ]
+    },
+    "directories": {
+      "output": "dist"
+    }
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.6.2"
+  }
+}

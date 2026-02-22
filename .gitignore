@@ -1,0 +1,11 @@
+node_modules/
+dist/
+build/
+out/
+.env
+.cache/
+thumbnails/
+*.db
+*.sqlite
+.DS_Store
+.npm
