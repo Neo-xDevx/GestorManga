@@ -444,8 +444,8 @@ async function renderAddForm(editManga = null) {
             </div>
             <div class="form-group">
                 <label>Ruta Local del Directorio</label>
-                <input type="text" id="ruta-local" value="${isEdit ? (editManga.ruta_local || '') : ''}" placeholder="Ejemplo: D:\\Mangas">
-                <small style="color: var(--text-secondary); font-size: 0.75rem; margin-top: 5px; display: block;">Se autocompletará con el nombre del manga al guardar (Ej: D:\\Mangas\\Solo Leveling)</small>
+                <input type="text" id="ruta-local" value="${isEdit ? (editManga.ruta_local || '') : ''}" placeholder="Ejemplo: D:\\Mangas\\Solo Leveling">
+                <small style="color: var(--text-secondary); font-size: 0.75rem; margin-top: 5px; display: block;">Ruta exacta a la carpeta del manga (Ej: D:\\Mangas\\Solo Leveling)</small>
             </div>
 
             <div class="form-divider"></div>
@@ -547,10 +547,6 @@ async function renderAddForm(editManga = null) {
 
         if (rutaLocalInput) {
             rutaLocalInput = rutaLocalInput.replace(/\//g, '\\');
-            if (!rutaLocalInput.toLowerCase().endsWith(tituloSeguro.toLowerCase())) {
-                if (!rutaLocalInput.endsWith('\\')) rutaLocalInput += '\\';
-                rutaLocalInput += tituloSeguro;
-            }
         }
 
         const mangaData = {
