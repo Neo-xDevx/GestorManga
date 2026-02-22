@@ -1,4 +1,4 @@
-# ManhwaDir
+# GestorManga
 
 ManhwaDir es una aplicación de escritorio moderna construida con **Electron**, **HTML/CSS/JS** y **SQLite** diseñada para gestionar tu biblioteca personal de manga, manhwa y webtoons con un estilo visual limpio inspirado en Windows 11.
 
