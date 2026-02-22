@@ -23,8 +23,8 @@ ManhwaDir es una aplicación de escritorio moderna construida con **Electron**, 
 
 1. **Clonar el repositorio:**
    ```bash
-   git clone https://github.com/tu-usuario/ManhwaDir.git
-   cd ManhwaDir
+   git clone https://github.com/Neo-xDevx/GestorManga.git
+   cd GestorManga
    ```
 
 2. **Instalar dependencias:**
