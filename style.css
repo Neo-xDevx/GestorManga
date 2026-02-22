@@ -592,6 +592,77 @@ body.light-theme .filter-group select option {
     /* Oculto según requerimiento */
 }
 
+/* List View Styles */
+.manga-grid.list-view {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 10px;
+}
+
+.manga-grid.list-view .manga-card {
+    display: flex;
+    flex-direction: row;
+    height: 120px;
+    aspect-ratio: auto;
+    border-radius: 12px;
+}
+
+.manga-grid.list-view .manga-image-container {
+    width: 90px;
+    height: 100%;
+    flex-shrink: 0;
+}
+
+.manga-grid.list-view .manga-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.manga-grid.list-view .manga-info {
+    position: relative;
+    background: transparent;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-grow: 1;
+}
+
+.manga-grid.list-view .manga-title {
+    color: var(--text-primary);
+    text-shadow: none;
+    font-size: 1.1rem;
+    text-align: left;
+    -webkit-line-clamp: 2;
+}
+
+.manga-grid.list-view .fav-badge {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 60px;
+    left: auto;
+}
+
+.manga-grid.list-view .card-options-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 15px;
+}
+
+.manga-grid.list-view .up-badge {
+    top: 10px;
+    left: 10px;
+}
+
+.manga-grid.list-view .manga-card:hover .fav-badge,
+.manga-grid.list-view .manga-card:hover .card-options-btn {
+    transform: translateY(-50%) scale(1.1);
+}
+
 .delete-icon {
     display: none;
     /* Movido al menú hamburguesa */
@@ -611,7 +682,7 @@ body.light-theme .filter-group select option {
     align-items: center;
     justify-content: center;
     z-index: 10;
-    transition: all var(--transition-speed);
+    transition: background var(--transition-speed), transform var(--transition-speed), color var(--transition-speed), opacity var(--transition-speed);
 }
 
 .card-options-btn {
@@ -629,7 +700,7 @@ body.light-theme .filter-group select option {
     color: white;
     z-index: 10;
     cursor: pointer;
-    transition: all var(--transition-speed);
+    transition: background var(--transition-speed), transform var(--transition-speed), color var(--transition-speed), opacity var(--transition-speed);
 }
 
 .card-options-btn:hover,

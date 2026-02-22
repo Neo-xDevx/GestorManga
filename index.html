@@ -27,11 +27,15 @@
                 <li class="nav-item active" data-section="directorio">
                     <i data-lucide="layout-grid"></i>
                     <span>Colección</span>
+                    <span id="manga-counter"
+                        style="background: var(--accent-color); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; margin-left: auto; font-weight: 600;">0</span>
                 </li>
 
                 <li class="nav-item" data-section="favoritos">
                     <i data-lucide="heart"></i>
                     <span>Favoritos</span>
+                    <span id="manga-counter-fav"
+                        style="background: var(--accent-color); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; margin-left: auto; font-weight: 600;">0</span>
                 </li>
                 <li class="nav-item" data-section="agregar">
                     <i data-lucide="plus-circle"></i>
@@ -53,6 +57,10 @@
                 <li class="nav-item" id="btn-backup" style="list-style: none;">
                     <i data-lucide="database-backup"></i>
                     <span>Respaldo BDD</span>
+                </li>
+                <li class="nav-item" id="btn-restore" style="list-style: none;">
+                    <i data-lucide="folder-up"></i>
+                    <span>Restaurar BDD</span>
                 </li>
             </div>
         </nav>
@@ -116,6 +124,18 @@
                         <option value="az">A-Z</option>
                         <option value="za">Z-A</option>
                     </select>
+                </div>
+                <!-- View Toggle Buttons -->
+                <div class="view-toggle-group"
+                    style="display: flex; gap: 5px; margin-left: 10px; border-left: 1px solid var(--border-color); padding-left: 15px;">
+                    <button id="view-grid-btn" class="view-btn active" title="Vista en Cuadrícula"
+                        style="background: transparent; border: none; color: var(--text-secondary); cursor: pointer; padding: 5px; border-radius: 6px; transition: all 0.2s;">
+                        <i data-lucide="layout-grid"></i>
+                    </button>
+                    <button id="view-list-btn" class="view-btn" title="Vista en Lista"
+                        style="background: transparent; border: none; color: var(--text-secondary); cursor: pointer; padding: 5px; border-radius: 6px; transition: all 0.2s;">
+                        <i data-lucide="list"></i>
+                    </button>
                 </div>
             </div>
 

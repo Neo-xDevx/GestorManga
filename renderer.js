@@ -67,6 +67,59 @@ navItems.forEach(item => {
     });
 });
 
+// View Mode Logic (Grid/List)
+let currentViewMode = localStorage.getItem('mangaViewMode') || 'grid';
+
+const btnViewGrid = document.getElementById('view-grid-btn');
+const btnViewList = document.getElementById('view-list-btn');
+
+function updateViewButtons() {
+    if (btnViewGrid && btnViewList) {
+        if (currentViewMode === 'grid') {
+            btnViewGrid.classList.add('active');
+            btnViewGrid.style.color = 'var(--accent-color)';
+            btnViewList.classList.remove('active');
+            btnViewList.style.color = 'var(--text-secondary)';
+        } else {
+            btnViewList.classList.add('active');
+            btnViewList.style.color = 'var(--accent-color)';
+            btnViewGrid.classList.remove('active');
+            btnViewGrid.style.color = 'var(--text-secondary)';
+        }
+    }
+}
+
+function setViewMode(mode) {
+    currentViewMode = mode;
+    localStorage.setItem('mangaViewMode', mode);
+    updateViewButtons();
+
+    // Si estamos en directorio o favoritos, volver a renderizar la vista
+    if (currentSection === 'directorio' || currentSection === 'favoritos') {
+        const grid = document.querySelector('.manga-grid');
+        if (grid) {
+            if (mode === 'list') {
+                grid.classList.add('list-view');
+            } else {
+                grid.classList.remove('list-view');
+            }
+        } else {
+            // Si la grid no existe por alguna razón pero tenemos datos, aplicamos filtros de nuevo
+            if (allMangasData.length > 0) applyFilters();
+        }
+    }
+}
+
+if (btnViewGrid) {
+    btnViewGrid.addEventListener('click', () => setViewMode('grid'));
+}
+if (btnViewList) {
+    btnViewList.addEventListener('click', () => setViewMode('list'));
+}
+
+// Inicializar botones visualmente
+updateViewButtons();
+
 // Theme Toggle Logic
 themeToggle.addEventListener('click', () => {
     document.body.classList.toggle('light-theme');
@@ -99,6 +152,24 @@ if (btnBackup) {
     });
 }
 
+// Restore Database Logic
+const btnRestore = document.getElementById('btn-restore');
+if (btnRestore) {
+    btnRestore.addEventListener('click', async () => {
+        if (confirm('¿Estás seguro de que quieres restaurar la base de datos? Esto REEMPLAZARÁ completamente tus datos actuales y la aplicación se reiniciará.')) {
+            try {
+                const result = await window.api.restoreBackup();
+                if (result && !result.success && result.message !== 'Operación cancelada') {
+                    showToast(result.message, 'error', 'alert-circle');
+                }
+                // Si es exitoso, la app se reinicia sola (no llega a este punto)
+            } catch (error) {
+                showToast('Error de sistema al restaurar: ' + error.message, 'error', 'alert-circle');
+            }
+        }
+    });
+}
+
 // Advanced Filter/Search Logic
 async function applyFilters() {
     const query = normalizeText(searchInput.value);
@@ -112,6 +183,8 @@ async function applyFilters() {
     if (currentSection === 'directorio') {
         // Obtenemos el totalSIEMPRE
         totalMangas = await window.api.getMangasCount();
+        const counterEl = document.getElementById('manga-counter');
+        if (counterEl) counterEl.innerText = totalMangas;
 
         // Si hay una búsqueda o filtro activo, ignoramos la paginación y traemos todo
         // Limit -1 en sqlite significa sin límite (o un número muy grande)
@@ -172,10 +245,10 @@ if (filterUpdates) filterUpdates.addEventListener('change', applyFilters);
 if (sortOrder) sortOrder.addEventListener('change', applyFilters);
 
 
-async function switchSection(section) {
+async function switchSection(section, keepPage = false) {
     currentSection = section;
     contentView.style.opacity = '0';
-    currentPage = 1;
+    if (!keepPage) currentPage = 1;
 
     // Mostrar/ocultar filtros según sección
     filtersContainer.style.display = (section === 'directorio' || section === 'favoritos') ? 'flex' : 'none';
@@ -220,6 +293,8 @@ async function switchSection(section) {
             break;
     }
 
+    updateSidebarCounters();
+
     requestAnimationFrame(() => {
         contentView.style.transform = 'translateY(0)';
         contentView.style.opacity = '1';
@@ -248,7 +323,7 @@ async function renderMangaList(mangas, animate = true) {
     }
 
     const grid = document.createElement('div');
-    grid.className = 'manga-grid';
+    grid.className = `manga-grid ${currentViewMode === 'list' ? 'list-view' : ''}`;
 
     for (const [index, manga] of mangas.entries()) {
         const isNew = isRecentlyUpdated(manga.fecha_capitulo_update);
@@ -278,7 +353,7 @@ async function renderMangaList(mangas, animate = true) {
         <div class="card-options-btn" onclick="event.stopPropagation(); showContextMenu(event, ${JSON.stringify(manga).replace(/"/g, '&quot;')})">
             <i data-lucide="more-vertical"></i>
         </div>
-        <div class="manga-image-container">
+        <div class="manga-image-container" style="height: 100%;">
             <img src="${displayImage}" class="manga-image" alt="${manga.titulo}" onerror="this.src='https://via.placeholder.com/300x450?text=Error+Carga'">
         </div>
         <div class="manga-info">
@@ -461,7 +536,7 @@ async function renderAddForm(editManga = null) {
                     <i data-lucide="${isEdit ? 'save' : 'plus-circle'}" style="margin-right: 8px; width: 18px;"></i>
                     ${isEdit ? 'Guardar Cambios' : 'Registrar Manga'}
                 </button>
-                <button type="button" class="btn-secondary" style="flex: 1; height: 50px;" onclick="switchSection('directorio')">
+                <button type="button" class="btn-secondary" style="flex: 1; height: 50px;" onclick="switchSection('directorio', true)">
                     Cancelar
                 </button>
             </div>
@@ -572,7 +647,7 @@ async function renderAddForm(editManga = null) {
                 if (localName) await window.api.updateManga(editManga.id, { ...mangaData, imagen_local: localName });
             }
             showToast('Manga actualizado correctamente');
-            switchSection('directorio');
+            switchSection('directorio', true);
         } else {
             const result = await window.api.addManga(mangaData);
             const mangaId = result.lastInsertRowid || result.id || result;
@@ -838,16 +913,30 @@ async function toggleFav(id, currentStatus) {
         }
     }
     showToast(`${newStatus ? 'Añadido a' : 'Eliminado de'} favoritos`, 'info', 'heart');
+    updateSidebarCounters();
 }
 
 async function deleteManga(id) {
     if (confirm('¿Eliminar manga?')) {
         await window.api.deleteManga(id);
         showToast('Manga eliminado correctamente', 'info', 'trash-2');
-        switchSection(currentSection);
+        switchSection(currentSection, true);
     }
 }
 
 // Modified to remove auto-seed so the database is completely clean
+
+// Sidebar Counters
+async function updateSidebarCounters() {
+    try {
+        const total = await window.api.getMangasCount();
+        const counterEl = document.getElementById('manga-counter');
+        if (counterEl) counterEl.innerText = total;
+
+        const favs = await window.api.getFavoritos();
+        const counterFavEl = document.getElementById('manga-counter-fav');
+        if (counterFavEl) counterFavEl.innerText = favs.length;
+    } catch (e) { console.error('Error updating sidebar counters:', e); }
+}
 
 switchSection('directorio');

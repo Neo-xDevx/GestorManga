@@ -206,6 +206,35 @@ ipcMain.handle('create-backup', async (event) => {
     }
 });
 
+ipcMain.handle('restore-backup', async (event) => {
+    const { canceled, filePaths } = await dialog.showOpenDialog({
+        title: 'Seleccionar Respaldo de Base de Datos',
+        properties: ['openFile'],
+        filters: [
+            { name: 'Database Files', extensions: ['db', 'sqlite'] },
+            { name: 'All Files', extensions: ['*'] }
+        ]
+    });
+
+    if (canceled || filePaths.length === 0) return { success: false, message: 'Operación cancelada' };
+
+    const sourcePath = filePaths[0];
+    const destinationPath = path.join(app.getPath('userData'), 'manhwadir.db');
+
+    try {
+        // Copiar el archivo seleccionado a la ubicación de la base de datos de la app
+        fs.copyFileSync(sourcePath, destinationPath);
+
+        // Relanzar la aplicación para que tome la nueva base de datos
+        app.relaunch();
+        app.exit(0);
+        return { success: true };
+    } catch (error) {
+        console.error('Restore error:', error);
+        return { success: false, message: 'Error al restaurar la base de datos: ' + error.message };
+    }
+});
+
 ipcMain.handle('get-local-image-url', async (event, fileName) => {
     if (!fileName) return null;
     if (fileName.startsWith('data:image')) return fileName; // Return Base64 directly

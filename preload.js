@@ -22,6 +22,7 @@ contextBridge.exposeInMainWorld('api', {
 
     // Offline Images & OS interaction
     createBackup: () => ipcRenderer.invoke('create-backup'),
+    restoreBackup: () => ipcRenderer.invoke('restore-backup'),
     openDirectory: (path) => ipcRenderer.invoke('open-directory', path),
     downloadImage: (url, id) => ipcRenderer.invoke('download-image', { url, id }),
     getLocalImageUrl: (fileName) => ipcRenderer.invoke('get-local-image-url', fileName)
