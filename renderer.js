@@ -180,19 +180,18 @@ async function applyFilters() {
     const order = sortOrder.value;
 
     // Si es el directorio
-    if (currentSection === 'directorio') {
-        // Obtenemos el totalSIEMPRE
-        totalMangas = await window.api.getMangasCount();
-        const counterEl = document.getElementById('manga-counter');
-        if (counterEl) counterEl.innerText = totalMangas;
+    const counterEl = document.getElementById('manga-counter');
+    const isFiltering = (query || status !== 'all' || genreId !== 'all' || category !== 'all' || updateFilter !== 'all');
 
-        // Si hay una búsqueda o filtro activo, ignoramos la paginación y traemos todo
-        // Limit -1 en sqlite significa sin límite (o un número muy grande)
-        if (query || status !== 'all' || genreId !== 'all' || category !== 'all' || updateFilter !== 'all') {
+    if (currentSection === 'directorio') {
+        if (isFiltering) {
+            // Si hay una búsqueda o filtro activo, traemos todo limit 10000
             const allRecords = await window.api.getMangas({ limit: 10000, offset: 0, order: order });
             allMangasData = allRecords;
         } else {
-            // Sin filtros, aplicamos paginación normal
+            // Sin filtros, aplicamos paginación normal desde DB
+            totalMangas = await window.api.getMangasCount();
+            if (counterEl) counterEl.innerText = totalMangas;
             const offset = (currentPage - 1) * itemsPerPage;
             allMangasData = await window.api.getMangas({ limit: itemsPerPage, offset: offset, order: order });
         }
@@ -222,8 +221,8 @@ async function applyFilters() {
         return matchesSearch && matchesStatus && matchesGenre && matchesUpdates && matchesCategory;
     });
 
-    // Ordenamiento (Solo para filtrados locales o favoritos, ya que el directorio viene ordenado de base)
-    if (currentSection !== 'directorio') {
+    // Ordenamiento (Para favoritos o si estamos filtrando en el directorio)
+    if (currentSection !== 'directorio' || (currentSection === 'directorio' && isFiltering)) {
         filtered.sort((a, b) => {
             if (order === 'recent') return b.id - a.id;
             if (order === 'oldest') return a.id - b.id;
@@ -233,16 +232,31 @@ async function applyFilters() {
         });
     }
 
+    if (currentSection === 'directorio' && isFiltering) {
+        // Actualizamos totalMangas al total filtrado y paginamos localmente
+        totalMangas = filtered.length;
+        if (counterEl) counterEl.innerText = totalMangas;
+
+        const offset = (currentPage - 1) * itemsPerPage;
+        filtered = filtered.slice(offset, offset + itemsPerPage);
+    }
+
     renderMangaList(filtered, false);
 }
 
+// Helper for filter changes
+function onFilterChange() {
+    currentPage = 1;
+    applyFilters();
+}
+
 // Event Listeners for Filters
-if (searchInput) searchInput.addEventListener('input', applyFilters);
-if (filterStatus) filterStatus.addEventListener('change', applyFilters);
-if (filterGenre) filterGenre.addEventListener('change', applyFilters);
-if (filterCategory) filterCategory.addEventListener('change', applyFilters);
-if (filterUpdates) filterUpdates.addEventListener('change', applyFilters);
-if (sortOrder) sortOrder.addEventListener('change', applyFilters);
+if (searchInput) searchInput.addEventListener('input', onFilterChange);
+if (filterStatus) filterStatus.addEventListener('change', onFilterChange);
+if (filterGenre) filterGenre.addEventListener('change', onFilterChange);
+if (filterCategory) filterCategory.addEventListener('change', onFilterChange);
+if (filterUpdates) filterUpdates.addEventListener('change', onFilterChange);
+if (sortOrder) sortOrder.addEventListener('change', onFilterChange);
 
 
 async function switchSection(section, keepPage = false) {
